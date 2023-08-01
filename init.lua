@@ -87,7 +87,7 @@ require('lazy').setup({
       { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+      { "folke/neodev.nvim", opts = {} }
     },
   },
 
@@ -101,9 +101,71 @@ require('lazy').setup({
 
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+		  'hrsh7th/cmp-path',
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
+
+      { --add copilot for nvim-cmp
+        "zbirenbaum/copilot-cmp",
+        event = "InsertEnter",
+        dependencies = {
+          -- Copilot
+          -- "github/copilot.vim",
+          "zbirenbaum/copilot.lua",
+          --     lazy = false,
+          config = function ()
+            require('copilot').setup({
+              panel = {
+                enabled = true,
+                auto_refresh = true,
+                keymap = {
+                  jump_prev = "[[",
+                  jump_next = "]]",
+                  accept = "<CR>",
+                  refresh = "gr",
+                  open = "<M-CR>"
+                },
+                layout = {
+                  position = "bottom", -- | top | left | right
+                  ratio = 0.4
+                },
+              },
+              suggestion = {
+                enabled = true,
+                auto_trigger = false,
+                debounce = 75,
+                keymap = {
+                  accept = "<M-l>",   --"<Tab>",
+                  accept_word = false,
+                  accept_line = false,
+                  next = "<M-]>",
+                  prev = "<M-[>",
+                  dismiss = "<C-]>",
+                },
+              },
+              filetypes = {
+                yaml = false,
+                markdown = false,
+                help = false,
+                gitcommit = false,
+                gitrebase = false,
+                hgcommit = false,
+                svn = false,
+                cvs = false,
+                ["."] = false,
+              },
+              copilot_node_command = 'node', -- Node.js version must be > 16.x
+              server_opts_overrides = {},
+            })
+          end,
+
+        },
+        config = function ()
+          require("copilot_cmp").setup()
+        end
+      },
     },
   },
 
@@ -129,15 +191,24 @@ require('lazy').setup({
     },
   },
 
-  {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
+  {  -- Theme inspired by Atom
+    'navarasu/onedark.nvim' },
 
+  {
+    --Github Neovim Theme
+    'projekt0n/github-nvim-theme',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup({
+        -- ...
+      })
+
+      vim.cmd.colorscheme 'github_dark_high_contrast'
+      --    vim.cmd('colorscheme github_dark')
+    end,
+
+  },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -145,7 +216,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
+        theme = 'auto',
         component_separators = '|',
         section_separators = '',
       },
@@ -190,6 +261,24 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+
+  {
+    "theprimeagen/harpoon", opts={}
+  },
+
+  {
+    'theprimeagen/git-worktree.nvim', opts={}
+  },
+  {
+    'nvim-lua/popup.nvim'
+  },
+  {"RRethy/vim-illuminate"},
+  {'echasnovski/mini.nvim', version = '*'},
+
+  --{
+  -- "jeffkreeftmeijer/vim-numbertoggle",
+  --   require("vim-numbertoggle").setup()
+  --},
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -239,6 +328,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
 vim.o.updatetime = 250
+vim.o.timeout = true
 vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
@@ -283,6 +373,7 @@ require('telescope').setup {
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+require("telescope").load_extension("git_worktree")
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -301,12 +392,13 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>st', require('telescope').extensions.git_worktree.git_worktrees, { desc = '[S]earch Git Work[t]ree' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'java'},
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -501,20 +593,59 @@ cmp.setup {
       end
     end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
+    if cmp.visible() then
+    cmp.select_prev_item()
+    elseif luasnip.locally_jumpable(-1) then
+    luasnip.jump(-1)
+    else
+    fallback()
+    end
     end, { 'i', 's' }),
+  },
+  sorting = {
+    priority_weight = 2,
+    comparators = {
+      require("copilot_cmp.comparators").prioritize,
+
+      -- Below is the default comparitor list and order for nvim-cmp
+      cmp.config.compare.offset,
+      -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+      cmp.config.compare.exact,
+      cmp.config.compare.score,
+      --cmp.config.compare.recently_used,
+      --cmp.config.compare.locality,
+      cmp.config.compare.kind,
+      cmp.config.compare.sort_text,
+      cmp.config.compare.length,
+      cmp.config.compare.order,
+    },
   },
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'copilot' },
+    { name = 'path' },
+    { name = 'buffer' },
   },
 }
+
+local numbertoggle = vim.api.nvim_create_augroup("numbertoggle", {})
+local autocmd = vim.api.nvim_create_autocmd
+autocmd({"BufEnter", "BufWinEnter","FocusGained","InsertLeave","WinEnter"}, {
+  group = numbertoggle,
+  pattern = '*',
+  command = 'if &nu && mode() != "i" | set rnu   | endif',
+})
+autocmd({"BufLeave","FocusLost","InsertEnter","WinLeave"}, {
+  group = numbertoggle,
+  pattern = '*',
+  command = "if &nu | set nornu | endif",
+})
+
+-- enable mini.nvim plugins
+require('mini.pairs').setup()
+
+--vim.keymap.set({'n','i'},<C-s>,':w<CR>',{silent = true})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
