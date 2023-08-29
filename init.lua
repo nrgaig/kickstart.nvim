@@ -1,3 +1,8 @@
+if vim.g.vscode then
+    -- VSCode extension
+else
+    -- ordinary Neovim
+
 --[[
 
 =====================================================================
@@ -627,6 +632,11 @@ cmp.setup {
     { name = 'path' },
     { name = 'buffer' },
   },
+  window={
+    completion={
+        border = {'┌', '─', '┐', '│', '┘', '─', '└', '│'}
+    }
+  }
 }
 
 local numbertoggle = vim.api.nvim_create_augroup("numbertoggle", {})
@@ -647,5 +657,6 @@ require('mini.pairs').setup()
 
 --vim.keymap.set({'n','i'},<C-s>,':w<CR>',{silent = true})
 
+end
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
