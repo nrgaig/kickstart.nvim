@@ -1,6 +1,22 @@
 return{
   {
-    "theprimeagen/harpoon", opts={}
+    "theprimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = {"nvim-lua/plenary.nvim"},
+    opts={},
+    init=function ()
+      vim.keymap.set("n", "\\a", function() require("harpoon"):list():append() end)
+      vim.keymap.set("n", "\\q", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end)
+
+      vim.keymap.set("n", "\\1", function() require("harpoon"):list():select(1) end)
+      vim.keymap.set("n", "\\2", function() require("harpoon"):list():select(2) end)
+      vim.keymap.set("n", "\\3", function() require("harpoon"):list():select(3) end)
+      vim.keymap.set("n", "\\4", function() require("harpoon"):list():select(4) end)
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set("n", "\\P", function() require("harpoon"):list():prev() end)
+      vim.keymap.set("n", "\\N", function() require("harpoon"):list():next() end)
+    end
   },
 
   {
