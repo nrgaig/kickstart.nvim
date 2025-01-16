@@ -33,7 +33,7 @@ return {
         return '%2l:%-2v'
       end
 
-      require("mini.completion").setup()
+      -- require("mini.completion").setup()
       require("mini.pairs").setup()
       -- require("mini.indentscope").setup({ draw = { animation = require('mini.indentscope').gen_animation.none() } })
       -- ... and there is more!

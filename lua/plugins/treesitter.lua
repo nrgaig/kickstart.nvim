@@ -1,3 +1,15 @@
+---@type rainbow_delimiters.config
+vim.g.rainbow_delimiters = {
+  highlight = {
+    'RainbowDelimiterYellow',
+    'RainbowDelimiterBlue',
+    'RainbowDelimiterOrange',
+    'RainbowDelimiterGreen',
+    'RainbowDelimiterViolet',
+    'RainbowDelimiterCyan',
+  },
+}
+
 return {
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -17,8 +29,9 @@ return {
       indent = { enable = true, disable = { 'ruby' } },
     },
     config = function()
-      -- require('nvim-treesitter.install').compilers = { 'zig' }
-      local opt = vim.opt
+      require 'nvim-treesitter.install'.prefer_git = false
+      require('nvim-treesitter.install').compilers = { "zig", "cc", "gcc", "clang", "cl" }
+      local opt = vim.wo
 
       opt.foldmethod = "expr"
       opt.foldexpr = "nvim_treesitter#foldexpr()"
@@ -41,7 +54,7 @@ return {
     -- See `:help ibl`
     main = 'ibl',
     opts = {
-      indent = { char = '▏' },
+      indent = { char = '┊' },
     },
   },
 }
