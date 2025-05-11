@@ -31,11 +31,11 @@ return {
     config = function()
       require 'nvim-treesitter.install'.prefer_git = false
       require('nvim-treesitter.install').compilers = { "zig", "cc", "gcc", "clang", "cl" }
-      local opt = vim.wo
-
-      opt.foldmethod = "expr"
-      opt.foldexpr = "nvim_treesitter#foldexpr()"
-      vim.cmd("autocmd BufReadPost,FileReadPost * normal zR")
+      -- local opt = vim.wo
+      --
+      -- opt.foldmethod = "expr"
+      -- opt.foldexpr = "nvim_treesitter#foldexpr()"
+      -- vim.cmd("autocmd BufReadPost,FileReadPost * normal zR")
     end,
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
@@ -45,7 +45,8 @@ return {
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     dependencies = {
       'hiphish/rainbow-delimiters.nvim',
-      'nvim-treesitter/nvim-treesitter-context'
+      'nvim-treesitter/nvim-treesitter-context',
+      'nvim-treesitter/nvim-treesitter-textobjects'
     },
   },
   { -- Add indentation guides even on blank lines

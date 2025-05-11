@@ -2,7 +2,7 @@ return {
     {
         'saghen/blink.cmp',
         -- use a release tag to download pre-built binaries
-        version = '*',
+        version = '1.*',
         ---@module 'blink.cmp'
         ---@type blink.cmp.Config
         opts = {
@@ -16,7 +16,6 @@ return {
             -- elsewhere in your config, without redefining it, due to `opts_extend`
             sources = {
                 default = { 'lsp', 'path', 'snippets', 'buffer', "lazydev" },
-                cmdline = {},
                 providers = {
                     lazydev = {
                         name = "LazyDev",
@@ -25,9 +24,6 @@ return {
                         score_offset = 100,
                     },
                 },
-            },
-            completion = {
-                menu = { auto_show = function(ctx) return ctx.mode ~= 'cmdline' end }
             },
         },
         opts_extend = { 'sources.default' },

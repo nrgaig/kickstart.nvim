@@ -1,7 +1,10 @@
 return {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    dependencies = {
+        'nvim-lua/plenary.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
+    },
     config = function()
         local builtin = require('telescope.builtin')
         vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
@@ -14,6 +17,9 @@ return {
         vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]ind [R]esume' })
         vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = '[F]ind Recent Files ("." for repeat)' })
         vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+        -- Enable Telescope extensions if they are installed
+        pcall(require('telescope').load_extension, 'ui-select')
     end,
     event = "VimEnter"
 
