@@ -14,7 +14,7 @@ return {
       "saghen/blink.cmp",
       { "williamboman/mason.nvim", opt = {} },
       "williamboman/mason-lspconfig.nvim",
-      { "j-hui/fidget.nvim", opts = {} },
+      { "j-hui/fidget.nvim",       opts = {} },
     },
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()
@@ -106,11 +106,11 @@ return {
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if
-            client
-            and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+              client
+              and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
           then
             local highlight_augroup =
-            vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+                vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
             vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
               buffer = event.buf,
               group = highlight_augroup,
@@ -137,7 +137,7 @@ return {
           --
           -- This may be unwanted, since they displace some of your code
           if
-            client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
+              client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
           then
             map("<leader>th", function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
@@ -145,6 +145,26 @@ return {
           end
         end,
       })
+
+      vim.diagnostic.config {
+        severity_sort = true,
+        float = { border = 'rounded', source = 'if_many' },
+        underline = { severity = vim.diagnostic.severity.ERROR },
+        virtual_text = {
+          source = 'if_many',
+          spacing = 2,
+          format = function(diagnostic)
+            local diagnostic_message = {
+              [vim.diagnostic.severity.ERROR] = diagnostic.message,
+              [vim.diagnostic.severity.WARN] = diagnostic.message,
+              [vim.diagnostic.severity.INFO] = diagnostic.message,
+              [vim.diagnostic.severity.HINT] = diagnostic.message,
+            }
+            return diagnostic_message[diagnostic.severity]
+          end,
+        },
+      }
     end,
   },
 }
+-- vim: sw=2
