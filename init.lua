@@ -33,4 +33,4 @@ require("lazy").setup({
     },
 })
 
-print("init.lua loaded")
+-- print("init.lua loaded")

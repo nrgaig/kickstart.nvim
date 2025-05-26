@@ -13,12 +13,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 
--- yank and paste from system clipboard
-vim.keymap.set({ 'n', 'v' }, '<Leader>y', '"+y', { desc = "yank to system clipboard" })
-vim.keymap.set({ 'n', 'v' }, '<Leader>Y', '"+Y', { desc = "yank to system clipboard" })
-vim.keymap.set({ 'n', 'v' }, '<Leader>p', '"+p', { desc = "paste to system clipboard" })
-vim.keymap.set({ 'n', 'v' }, '<Leader>P', '"+P', { desc = "paste to system clipboard" })
+-- yank and paste with system clipboard
+vim.keymap.set({ 'n', 'v' }, '<Leader>y', [["+y]], { desc = "Yank into system clipboard" })
+vim.keymap.set({ 'n', 'v' }, '<Leader>Y', [["+Y]], { desc = "Yank to end of line into system clipboard" })
+vim.keymap.set({ 'n', 'v' }, '<Leader>p', [["+p]], { desc = "Paste from system clipboard after cursor" })
+vim.keymap.set({ 'n', 'v' }, '<Leader>P', [["+P]], { desc = "Paste from system clipboard before cursor" })
 
-print("keymaps.lua loaded")
+-- move line
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
 
 -- vim: ts=2 sts=2 sw=2 et
